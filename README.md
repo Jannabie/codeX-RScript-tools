@@ -1,6 +1,6 @@
 # GSC Tool — codeX RScript Script Extractor & Repacker
 
-Tool untuk membaca, mengedit, dan merepack file script `.gsc` dari Visual Novel **Forest** (Liai Soft), engine **codeX RScript**.
+Tool untuk membaca, mengedit, dan merepack file script `.gsc` dari Visual Novel **Forest** (Liar Soft), engine **codeX RScript**.
 
 ![Proof](https://i.imgur.com/RtR8Go4.png)
 
