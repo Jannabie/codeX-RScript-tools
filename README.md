@@ -1,8 +1,15 @@
 # GSC Tool — codeX RScript Script Extractor & Repacker
 
-Tool untuk membaca, mengedit, dan merepack file script `.gsc` dari Visual Novel **Forest** (Liar Soft), engine **codeX RScript**.
+Tool untuk baca, edit, dan repack file script `.gsc` dari Visual Novel **Forest** (Liar Soft), engine **codeX RScript**.
 
-![Proof](https://i.imgur.com/RtR8Go4.png)
+---
+
+## Proof of Concept
+
+| Screenshot |
+|:---:|
+| ![Proof](https://i.imgur.com/RtR8Go4.png) |
+| *Terjemahan berjalan in-game* |
 
 ---
 
@@ -14,13 +21,13 @@ Tool untuk membaca, mengedit, dan merepack file script `.gsc` dari Visual Novel 
 | `grpo.xfl`, `grpo_bg.xfl`, dst. | Archive LB berisi asset grafis (`.wcg`, `.lwg`) |
 | `grps.xfl` | Archive LB berisi UI, dialogue image, choice image |
 
-Script yang berisi teks dialog ada di file `.gsc` berukuran besar (±50 KB–400 KB) seperti `2100.gsc`, `2300.gsc`, `2500.gsc`, `2600.gsc`, dst. File `.gsc` kecil (< 5 KB) hanya berisi logic/inisialisasi engine.
+File `.gsc` yang berisi dialog biasanya yang ukurannya besar (±50–400 KB) — kayak `2100.gsc`, `2300.gsc`, `2500.gsc`, `2600.gsc`, dsb. Yang ukurannya kecil (< 5 KB) isinya cuma logic/inisialisasi engine, skip aja.
 
 ---
 
 ## Format .gsc
 
-File `.gsc` adalah **bytecode compiled** dari codeX RScript. Strukturnya:
+File `.gsc` adalah **bytecode compiled** dari codeX RScript:
 
 ```
 [Header 28 bytes]
@@ -32,7 +39,7 @@ File `.gsc` adalah **bytecode compiled** dari codeX RScript. Strukturnya:
 [Extra trailing]
 ```
 
-Header terdiri dari 7 × `uint32` little-endian:
+Header: 7 × `uint32` little-endian:
 
 | Offset | Field |
 |---|---|
@@ -61,9 +68,9 @@ python gsc_tool.py list *.gsc
 python gsc_tool.py export 2500.gsc -o 2500.json
 ```
 
-### 3. Edit terjemahan di JSON
+### 3. Edit terjemahan
 
-Buka file JSON, isi field `"translated"` — jangan ubah field lain:
+Buka JSON, isi field `"translated"` — jangan ubah yang lain:
 
 ```json
 {
@@ -74,8 +81,7 @@ Buka file JSON, isi field `"translated"` — jangan ubah field lain:
 }
 ```
 
-> ⚠️ Jangan ubah `"original"`, `"index"`, atau `"offset"`. Hanya isi `"translated"`.  
-> Karakter seperti `^ck` adalah **control code** engine — harus ikut disalin/dipertahankan.
+> ⚠️ Jangan sentuh `"original"`, `"index"`, atau `"offset"`. Karakter kayak `^ck` itu **control code** engine — harus ikut disalin.
 
 ### 4. Repack ke .gsc
 
@@ -83,7 +89,7 @@ Buka file JSON, isi field `"translated"` — jangan ubah field lain:
 python gsc_tool.py import 2500.gsc 2500.json -o 2500_translated.gsc
 ```
 
-### 5. Batch (semua file sekaligus)
+### 5. Batch
 
 ```bash
 # Export semua ke folder json/
@@ -99,7 +105,7 @@ python gsc_tool.py import-all *.gsc -d json/ -o repacked/
 python gsc_tool.py verify *.gsc
 ```
 
-Semua 11 file sample telah diverifikasi **100% identik** setelah roundtrip.
+Semua 11 file sample sudah diverifikasi **100% identik** setelah roundtrip.
 
 ---
 
@@ -109,7 +115,7 @@ Semua 11 file sample telah diverifikasi **100% identik** setelah roundtrip.
 |---|---|
 | `info <file>` | Detail info + daftar string |
 | `info -v <file>` | + hex dump bytecode |
-| `list <files...>` | Ringkasan banyak file |
+| `list <files...>` | Ringkasan banyak file sekaligus |
 | `export <file> -o out.json` | Export string ke JSON |
 | `import <file> <json> -o out.gsc` | Import JSON → repack .gsc |
 | `repack <file> -o out.gsc` | Rebuild tanpa edit |
@@ -121,6 +127,6 @@ Semua 11 file sample telah diverifikasi **100% identik** setelah roundtrip.
 
 ## Catatan
 
-- Default encoding: **Shift-JIS**. Untuk terjemahan non-ASCII (misal Indonesia dengan karakter seperti `é`), gunakan flag `--encoding utf-8` saat import jika engine mendukung.
-- String table menyimpan **nama variabel** (`grpo`, `grpo_bg`, dst.) **sekaligus teks dialog** di file `.gsc` besar.
-- File `.gsc` kecil (< 5 KB) tidak mengandung dialog, aman diabaikan.
+- Default encoding: **Shift-JIS**. Kalau terjemahan pakai karakter non-ASCII (misal `é`), tambah flag `--encoding utf-8` saat import — tapi pastiin engine-nya support dulu.
+- String table di file `.gsc` besar nyimpen **nama variabel sekaligus teks dialog** — keduanya ada di tempat yang sama.
+- File `.gsc` kecil (< 5 KB) nggak ada dialognya, aman diabaikan.
